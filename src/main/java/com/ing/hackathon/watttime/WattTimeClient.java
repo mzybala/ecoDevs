@@ -63,9 +63,9 @@ public class WattTimeClient {
             System.out.println(response.getBody());
             return response.getBody();
         } catch (Exception e) {
-            System.out.println("region: " + region);
+            System.out.println("Cannot get data from region: " + region);
             System.out.println(e.getMessage());
-            throw new RuntimeException(e);
+            throw new WatttimeException("Cannot get data from region: " + region, e);
         }
     }
 
