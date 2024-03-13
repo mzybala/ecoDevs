@@ -22,9 +22,27 @@ public class Co2ResultDto implements Serializable {
     @JsonProperty("data")
     List<Data> data;
 
+    @JsonProperty("meta")
+    Meta meta;
+
     public static class Data {
-        String point_time;
+        @JsonProperty("point_time")
+        String pointTime;
+        @JsonProperty("value")
         Float value;
+    }
+
+    public static class Meta {
+        @JsonProperty("data_point_period_seconds")
+        String dataPointPeriodSeconds;
+        @JsonProperty("region")
+        String region;
+        @JsonProperty("signal_type")
+        String signalType;
+        @JsonProperty("units")
+        String units;
+        @JsonProperty("warnings")
+        List<String> warnings;
     }
 
 }

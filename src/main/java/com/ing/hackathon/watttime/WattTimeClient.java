@@ -53,14 +53,20 @@ public class WattTimeClient {
         return responseUntity.getBody();
     }
 
-    public void getSignalIndex(final String region) throws URISyntaxException {
-        HttpHeaders headers = new HttpHeaders();
-        headers.put(HttpHeaders.AUTHORIZATION, Collections.singletonList("Bearer " + getToken()));
-        HttpEntity<?> entity = new HttpEntity<>(headers);
-        URI uri = new URI(SIGNAL_INDEX + "?region=" + region + "&signal_type=" + "co2_moer");
-
-        HttpEntity<String> response = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
-        System.out.println(response);
+    public Co2ResultDto getSignalIndex(final String region) {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.put(HttpHeaders.AUTHORIZATION, Collections.singletonList("Bearer " + getToken()));
+            HttpEntity<?> entity = new HttpEntity<>(headers);
+            URI uri = new URI(SIGNAL_INDEX + "?region=" + region + "&signal_type=" + "co2_moer");
+            HttpEntity<Co2ResultDto> response = restTemplate.exchange(uri, HttpMethod.GET, entity, Co2ResultDto.class);
+            System.out.println(response.getBody());
+            return response.getBody();
+        } catch (Exception e) {
+            System.out.println("region: " + region);
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
     public void getForecast(final String region) throws URISyntaxException {
