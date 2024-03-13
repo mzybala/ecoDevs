@@ -2,7 +2,13 @@ package com.ing.hackathon.watttime;
 
 public class WattTimeClient {
 
-    private static final String URL = "https://api.watttime.org/register";
+    private static final String BASE_URL = "https://api.watttime.org";
+    private static final String R = "https://api.watttime.org";
+
+    private String token;
+
+
+
 
     public WattTimeClient() {
 
