@@ -27,9 +27,7 @@ public class HackathonController {
     @GetMapping(value = "/carbon/footprint/index")
     public List<Co2ResultDto> getCo2Results(@RequestParam(required = false, name = "regions") List<String> regions) {
         if (regions.isEmpty()) {
-            return List.of(wattTimeClient.getSignalIndex("FR"),
-                    wattTimeClient.getSignalIndex("PL"),
-                    wattTimeClient.getSignalIndex("DE"));
+            return wattTimeUtil.getRegions().stream().map(wattTimeClient::getSignalIndex).collect(Collectors.toList());
         } else {
             return regions.stream().map(wattTimeClient::getSignalIndex).collect(Collectors.toList());
         }
