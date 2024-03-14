@@ -60,7 +60,6 @@ public class WattTimeClient {
             HttpEntity<?> entity = new HttpEntity<>(headers);
             URI uri = new URI(SIGNAL_INDEX + "?region=" + region + "&signal_type=" + "co2_moer");
             HttpEntity<Co2ResultDto> response = restTemplate.exchange(uri, HttpMethod.GET, entity, Co2ResultDto.class);
-            System.out.println(response.getBody());
             return response.getBody();
         } catch (Exception e) {
             System.out.println("Cannot get data from region: " + region);
