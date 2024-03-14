@@ -17,7 +17,7 @@ public class Scheduler {
     @Autowired
     WattTimeUtil wattTimeUtil;
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 1000)
     public void scheduleCarbonFootprintIndex() {
         Co2ResultDto minValue = wattTimeUtil.getRegionWithLowestCarbonFootprint();
         log.info("Pushing to topic: {} value: {}", "keda-topic-" + minValue.getMeta().getRegion(), minValue.getData().get(0).getValue());

@@ -35,6 +35,12 @@ public class HackathonController {
         }
     }
 
+    @PostMapping(value = "/set/regions")
+    public ResponseEntity<?> setRegions(@RequestBody SetRegionRequest request) {
+        wattTimeUtil.setRegions(request.getRegions());
+        return ResponseEntity.ok("Regions: " + request.getRegions().toString() + " set");
+    }
+
     @PostMapping(value = "/calculate/force/region/scale")
     public ResponseEntity<?> calculateForceRegionScale() {
         Co2ResultDto minValue = wattTimeUtil.getRegionWithLowestCarbonFootprint();
@@ -48,7 +54,6 @@ public class HackathonController {
         log.info("Pushing to topic: {} value: {}", "keda-topic-" + request.getRegion(), "force");
         pubSubPublisher.publishMessage("keda-topic-" + request.getRegion(), "force");
         return ResponseEntity.ok(request.getRegion() + " scaled up");
-
     }
 
     @ExceptionHandler({WatttimeException.class})

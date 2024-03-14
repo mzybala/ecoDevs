@@ -1,5 +1,6 @@
 package com.ing.hackathon.watttime;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -13,6 +14,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
+@Slf4j
 public class WattTimeClient {
 
     private static final String BASE_URL = "https://api.watttime.org";
@@ -27,6 +29,8 @@ public class WattTimeClient {
     private static final String MAIL = "skt17700@zslsz.com";
 
     RestTemplate restTemplate = new RestTemplate();
+    private String token;
+    private Instant tokenExpirationTime;
 
     public void getRegion(final String latitude, final String longitude) throws URISyntaxException {
         HttpHeaders headers = new HttpHeaders();
@@ -36,7 +40,7 @@ public class WattTimeClient {
                 "&signal_type=" + "co2_moer");
 
         HttpEntity<String> response = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
-        System.out.println(response);
+        log.info(String.valueOf(response));
     }
 
     public Co2ResultDto getCurrentHistorical(final String region) throws URISyntaxException {
@@ -49,7 +53,7 @@ public class WattTimeClient {
                 "&end=" + now);
 
         HttpEntity<Co2ResultDto> responseUntity = restTemplate.exchange(uri, HttpMethod.GET, entity, Co2ResultDto.class);
-        System.out.println(responseUntity);
+        log.info(String.valueOf(responseUntity));
         return responseUntity.getBody();
     }
 
@@ -62,8 +66,8 @@ public class WattTimeClient {
             HttpEntity<Co2ResultDto> response = restTemplate.exchange(uri, HttpMethod.GET, entity, Co2ResultDto.class);
             return response.getBody();
         } catch (Exception e) {
-            System.out.println("Cannot get data from region: " + region);
-            System.out.println(e.getMessage());
+            log.error("Cannot get data from region: " + region);
+            log.error(e.getMessage());
             throw new WatttimeException("Cannot get data from region: " + region, e);
         }
     }
@@ -75,16 +79,21 @@ public class WattTimeClient {
         URI uri = new URI(FORECAST + "?region=" + region + "&signal_type=" + "co2_moer");
 
         HttpEntity<String> response = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
-        System.out.println(response);
+        log.info(String.valueOf(response));
     }
 
     public String getToken() {
-        HttpHeaders headers = new HttpHeaders();
-        final String user = LOGIN + ":" + PASSWORD;
-        headers.put(HttpHeaders.AUTHORIZATION, Collections.singletonList("Basic " + Base64.getEncoder().encodeToString(user.getBytes())));
-        HttpEntity<?> entity = new HttpEntity<>(headers);
-        HttpEntity<TokenDto> response = restTemplate.exchange(LOGIN_URL, HttpMethod.GET, entity, TokenDto.class);
-        return Objects.requireNonNull(response.getBody()).getToken();
+        if (tokenExpirationTime == null || tokenExpirationTime.isBefore(Instant.now())) {
+            log.info("Generate new token");
+            HttpHeaders headers = new HttpHeaders();
+            final String user = LOGIN + ":" + PASSWORD;
+            headers.put(HttpHeaders.AUTHORIZATION, Collections.singletonList("Basic " + Base64.getEncoder().encodeToString(user.getBytes())));
+            HttpEntity<?> entity = new HttpEntity<>(headers);
+            HttpEntity<TokenDto> response = restTemplate.exchange(LOGIN_URL, HttpMethod.GET, entity, TokenDto.class);
+            token = Objects.requireNonNull(response.getBody()).getToken();
+            tokenExpirationTime = Instant.now().plus(29, ChronoUnit.MINUTES).plus(50, ChronoUnit.SECONDS);
+        }
+        return token;
     }
 
 
@@ -99,6 +108,6 @@ public class WattTimeClient {
         HttpEntity<?> entity = new HttpEntity<>(body, headers);
 
         HttpEntity<String> response = restTemplate.exchange(REGISTER_URL, HttpMethod.POST, entity, String.class);
-        System.out.println(response);
+        log.info(String.valueOf(response));
     }
 }
