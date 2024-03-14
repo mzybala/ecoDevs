@@ -4,7 +4,6 @@ import com.ing.hackathon.apis.CarbonAwareSdkClient;
 import com.ing.hackathon.apis.CarbonEmissionsParams;
 import com.ing.hackathon.apis.DefaultCarbonEmissionsParams;
 import com.ing.hackathon.sci.*;
-import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
