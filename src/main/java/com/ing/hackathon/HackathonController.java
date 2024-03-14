@@ -1,5 +1,8 @@
 package com.ing.hackathon;
 
+import com.ing.hackathon.cloud.CloudProviderService;
+import com.ing.hackathon.cloud.CloudProvidersResponseDto;
+import com.ing.hackathon.cloud.DeploymentsResponseDto;
 import com.ing.hackathon.cloud.PubSubPublisher;
 import com.ing.hackathon.watttime.Co2ResultDto;
 import com.ing.hackathon.watttime.WattTimeClient;
@@ -23,6 +26,7 @@ public class HackathonController {
     private final WattTimeClient wattTimeClient;
     private final PubSubPublisher pubSubPublisher;
     private final WattTimeUtil wattTimeUtil;
+    private final CloudProviderService cloudProviderService;
 
     @GetMapping(value = "/carbon/footprint/index")
     public List<Co2ResultDto> getCo2Results(@RequestParam(required = false, name = "regions") List<String> regions) {
@@ -52,6 +56,16 @@ public class HackathonController {
         log.info("Pushing to topic: {} value: {}", "keda-topic-" + request.getRegion(), "force");
         pubSubPublisher.publishMessage("keda-topic-" + request.getRegion(), "force");
         return ResponseEntity.ok(request.getRegion() + " scaled up");
+    }
+
+    @GetMapping(value = "/v1/cloud/providers")
+    public CloudProvidersResponseDto getCloudProviders() {
+        return cloudProviderService.getCloudProviders();
+    }
+
+    @GetMapping(value = "/v1/cloud/deployments")
+    public DeploymentsResponseDto deployments() {
+        return cloudProviderService.deployments();
     }
 
     @ExceptionHandler({WatttimeException.class})
