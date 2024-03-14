@@ -1,10 +1,7 @@
 package com.ing.hackathon.watttime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.List;
@@ -14,7 +11,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Co2ResultDto implements Serializable {
+public class Co2ResultDto {
 
     @JsonProperty("token")
     String token;
@@ -25,6 +22,8 @@ public class Co2ResultDto implements Serializable {
     @JsonProperty("meta")
     Meta meta;
 
+    @Setter
+    @Getter
     public static class Data {
         @JsonProperty("point_time")
         String pointTime;
@@ -32,6 +31,8 @@ public class Co2ResultDto implements Serializable {
         Float value;
     }
 
+    @Setter
+    @Getter
     public static class Meta {
         @JsonProperty("data_point_period_seconds")
         String dataPointPeriodSeconds;
